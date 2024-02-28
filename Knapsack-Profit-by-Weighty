@@ -1,0 +1,68 @@
+#include <stdio.h>
+struct Item {
+    int weight;
+    int value;
+    double ratio;
+};
+
+void swap(struct Item *a, struct Item *b) {
+    struct Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+void sortByRatio(struct Item items[], int n) {
+    int i, j;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (items[j].ratio < items[j + 1].ratio) {
+                swap(&items[j], &items[j + 1]);
+            }
+        }
+    }
+}
+void knapsackGreedy(struct Item items[], int n, int capacity) {
+    sortByRatio(items, n);
+
+    int currentWeight = 0;
+    double maxValue = 0;
+
+    printf("Selected items:\n");
+
+    for (int i = 0; i < n; i++) {
+        if (currentWeight + items[i].weight <= capacity) {
+            currentWeight += items[i].weight;
+            maxValue += items[i].value;
+            printf("Item %d: Weight = %d, Value = %d\n", i + 1, items[i].weight, items[i].value);
+        } else {
+            double remainingCapacity = capacity - currentWeight;
+            maxValue += (remainingCapacity / items[i].weight) * items[i].value;
+            break;
+        }
+    }
+
+    printf("Maximum Value: %.2lf\n", maxValue);
+}
+
+int main() {
+    int n, capacity;
+
+    printf("Enter the number of items: ");
+    scanf("%d", &n);
+
+    struct Item items[n];
+
+    printf("Enter the weight and value for each item:\n");
+
+    for (int i = 0; i < n; i++) {
+        printf("Item %d: ", i + 1);
+        scanf("%d %d", &items[i].weight, &items[i].value);
+        items[i].ratio = (double)items[i].value / items[i].weight;
+    }
+
+    printf("Enter the capacity of the knapsack: ");
+    scanf("%d", &capacity);
+
+    knapsackGreedy(items, n, capacity);
+
+    return 0;
+}
