@@ -1,0 +1,124 @@
+#include <stdio.h>
+
+struct Item {
+    int weight;
+    int profit;
+    double ratio; // For the profit/weight ratio
+};
+
+// Swap function used by all sorting algorithms
+void swap(struct Item *a, struct Item *b) {
+    struct Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Sort by profit (descending)
+void sortByProfit(struct Item items[], int n) {
+    int i, j;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (items[j].profit < items[j + 1].profit) {
+                swap(&items[j], &items[j + 1]);
+            }
+        }
+    }
+}
+
+// Sort by weight (ascending)
+void sortByWeight(struct Item items[], int n) {
+    int i, j;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (items[j].weight > items[j + 1].weight) {
+                swap(&items[j], &items[j + 1]);
+            }
+        }
+    }
+}
+
+// Sort by profit/weight ratio (descending)
+void sortByRatio(struct Item items[], int n) {
+    int i, j;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (items[j].ratio < items[j + 1].ratio) {
+                swap(&items[j], &items[j + 1]);
+            }
+        }
+    }
+}
+
+// Solve knapsack by maximum profit
+void knapsackByProfit(struct Item items[], int n, int capacity) {
+    sortByProfit(items, n);
+    int currentWeight = 0;
+    int maxProfit = 0;
+    printf("\nBy Maximum Profit:\n");
+    for (int i = 0; i < n && currentWeight < capacity; i++) {
+        if (currentWeight + items[i].weight <= capacity) {
+            currentWeight += items[i].weight;
+            maxProfit += items[i].profit;
+            printf("Item %d: Weight = %d, Profit = %d\n", i + 1, items[i].weight, items[i].profit);
+        }
+    }
+    printf("Maximum Profit: %d\n", maxProfit);
+}
+
+// Solve knapsack by minimum weight
+void knapsackByWeight(struct Item items[], int n, int capacity) {
+    sortByWeight(items, n);
+    int currentWeight = 0;
+    int maxProfit = 0;
+    printf("\nBy Minimum Weight:\n");
+    for (int i = 0; i < n && currentWeight < capacity; i++) {
+        if (currentWeight + items[i].weight <= capacity) {
+            currentWeight += items[i].weight;
+            maxProfit += items[i].profit;
+            printf("Item %d: Weight = %d, Profit = %d\n", i + 1, items[i].weight, items[i].profit);
+        }
+    }
+    printf("Maximum Profit: %d\n", maxProfit);
+}
+
+// Solve knapsack by profit/weight ratio
+void knapsackByRatio(struct Item items[], int n, int capacity) {
+    sortByRatio(items, n);
+    int currentWeight = 0;
+    double maxValue = 0;
+    printf("\nBy Profit/Weight Ratio:\n");
+    for (int i = 0; i < n && currentWeight < capacity; i++) {
+        if (currentWeight + items[i].weight <= capacity) {
+            currentWeight += items[i].weight;
+            maxValue += items[i].profit;
+            printf("Item %d: Weight = %d, Profit = %d\n", i + 1, items[i].weight, items[i].profit);
+        }
+    }
+    printf("Maximum Value: %.2lf\n", maxValue);
+}
+
+int main() {
+    int n, capacity;
+
+    printf("Enter the number of items: ");
+    scanf("%d", &n);
+
+    struct Item items[n];
+
+    printf("Enter the weight and profit for each item:\n");
+    for (int i = 0; i < n; i++) {
+        printf("Item %d: ", i + 1);
+        scanf("%d %d", &items[i].weight, &items[i].profit);
+        items[i].ratio = (double)items[i].profit / items[i].weight;
+    }
+
+    printf("Enter the capacity of the knapsack: ");
+    scanf("%d", &capacity);
+
+    // Solving by all three strategies
+    knapsackByProfit(items, n, capacity);
+    knapsackByWeight(items, n, capacity);
+    knapsackByRatio(items, n, capacity);
+
+    return 0;
+}
